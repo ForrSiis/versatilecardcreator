@@ -1,16 +1,43 @@
-const fs = require('fs');
+import conn from 'lib/db';
+//const async = require('async');
 
-// users in JSON file for simplicity, store in a db for production applications
-let users = require('data/users.json');
+console.log('conn', conn);
 
 export const usersRepo = {
-    getAll: () => users,
-    getById: id => users.find(x => x.id.toString() === id.toString()),
-    find: x => users.find(x),
-    create,
-    update,
-    delete: _delete
+	getAll,
+	getById,
+	find,
+	create,
+	update,
+	delete: _delete
 };
+
+function getAll() {
+	return new Promise(async (resolve, reject) => {
+		console.log("Retrieving Users from DB...");
+		const client = await conn.connect();
+		const result = await client.query({text:"SELECT * FROM users;"});
+		return resolve(result.rows);
+	});
+}
+
+async function getById(alias) {
+	try {
+		console.log("Retrieving Users from DB...");
+		const query = `SELECT * FROM users WHERE alias = '${alias}';`;
+		const user = await conn.query(query);
+		console.log('user', user);
+		return user;
+	}
+	catch (error) {
+		console.log(error);
+	}
+}
+
+
+async function find(id) {
+}
+
 
 function create(user) {
     // generate new user id
@@ -41,7 +68,7 @@ function _delete(id) {
     // filter out deleted user and save
     users = users.filter(x => x.id.toString() !== id.toString());
     saveData();
-    
+
 }
 
 // private helper functions

@@ -4,8 +4,12 @@ export default apiHandler({
     get: getUsers
 });
 
-function getUsers(req, res) {
+async function getUsers(req, res) {
     // return users without hashed passwords in the response
-    const response = usersRepo.getAll().map(x => omit(x, 'hash'));
+    let response = await usersRepo.getAll();
+	console.log('response', response);
+
+	 response = response.map(e => omit(e, 'hash'));
+	console.log('response', response);
     return res.status(200).json(response);
 }
