@@ -1,7 +1,4 @@
-import conn from 'lib/db';
-//const async = require('async');
-
-console.log('conn', conn);
+import client from 'lib/db';
 
 export const usersRepo = {
 	getAll,
@@ -15,7 +12,7 @@ export const usersRepo = {
 function getAll() {
 	return new Promise(async (resolve, reject) => {
 		console.log("Retrieving Users from DB...");
-		const client = await conn.connect();
+		await client.connect();
 		const result = await client.query({text:"SELECT * FROM users;"});
 		return resolve(result.rows);
 	});
